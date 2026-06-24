@@ -1,0 +1,26 @@
+image: ruby:3.3
+
+services:
+  - name: redis:7-alpine
+    alias: redis
+
+variables:
+  REDIS_URL: redis://redis:6379
+
+stages:
+  - test
+
+cache:
+  paths:
+    - vendor/ruby
+
+before_script:
+  - gem install bundler
+  - bundle config set path vendor/ruby
+  - bundle install
+
+test:
+  stage: test
+  script:
+    - bundle exec rspec
+    - ./test_rate_limit.sh
